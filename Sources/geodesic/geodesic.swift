@@ -47,3 +47,28 @@ public func distance(_ x: (lat: Double, lon: Double),
     geod_inverse(&g, xLat, xLon, yLat, yLon, &s12, nil, nil)
     return s12
 }
+
+public func project(_ l1: (lat: Double, lon: Double),
+                    _ l2: (azi: Double, dis: Double),
+                    ellipsoid: (a: Double, f: Double) = wgs84
+) -> (lat: Double, lon: Double) {
+    assert(l1.lat >= -90.0 / 2 && l1.lat <= 90.0 / 2, "l1.lat '\(l1.lat)' outside [-90, 90]")
+    assert(l1.lon >= -180.0 && l1.lon <= 180.0, "l1.lon '\(l1.lon)' outside [-180, 180]")
+    assert(l2.azi >= 0.0 && l2.azi <= 360, "l2.azi '\(l2.azi))' outside [0, 360]")
+
+    if l2.dis <= 0.0 {
+        return l1
+    }
+
+    let lat1 = l1.lat
+    let lon1 = l1.lon
+    let azi1 = l2.azi
+    let s12 = l2.dis
+
+    var lat2 = Double.nan
+    var lon2 = Double.nan
+    var g: geod_geodesic = geod_geodesic()
+    geod_init(&g, ellipsoid.a, ellipsoid.f)
+    geod_direct(&g, lat1, lon1, azi1, s12, &lat2, &lon2, nil)
+    return (lat2, lon2)
+}
