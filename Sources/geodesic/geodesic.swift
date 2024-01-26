@@ -1,4 +1,5 @@
 import geographiclib
+import CoreLocation
 
 /// [WGS 84 ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System) definition
 public let wgs84 = (a: 6378137.0, f: 1 / 298.257223563)
@@ -71,4 +72,10 @@ public func project(_ l1: (lat: Double, lon: Double),
     geod_init(&g, ellipsoid.a, ellipsoid.f)
     geod_direct(&g, lat1, lon1, azi1, s12, &lat2, &lon2, nil)
     return (lat2, lon2)
+}
+
+public func project(loc: CLLocation, az: Double, meters: Double) -> CLLocation {
+    let dest = project((lat: loc.coordinate.latitude, lon: loc.coordinate.longitude),
+                   (azi: az, dis: meters))
+    return CLLocation(latitude: dest.lat, longitude: dest.lon)
 }
