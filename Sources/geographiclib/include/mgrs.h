@@ -156,6 +156,26 @@ extern "C" {
  *    MGRS       : MGRS coordinate string           (output)
  *
  */
+#define MGRS_LETTERS            3
+long USE_DLL Convert_Geodetic_To_MGRS_param (double Latitude,
+                                             double Longitude,
+                                             long   Precision,
+                                             long*  Zone,
+                                             long   Letters[MGRS_LETTERS],
+                                             double* Easting,
+                                             double* Northing,
+                                             long* PrecisionOut);
+/*
+* The function Convert_Geodetic_To_MGRS converts geodetic (latitude and
+* longitude) coordinates to an MGRS coordinate values, according to the
+* current ellipsoid parameters.  If any errors occur, the error code(s)
+* are returned by the  function, otherwise MGRS_NO_ERROR is returned.
+*
+*    Latitude   : Latitude in radians              (input)
+*    Longitude  : Longitude in radians             (input)
+*    Precision  : Precision level of MGRS string   (input)
+*
+*/
 
 
   long USE_DLL Convert_MGRS_To_Geodetic (char *MGRS,

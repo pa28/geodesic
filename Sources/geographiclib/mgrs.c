@@ -1308,5 +1308,22 @@ long Convert_MGRS_To_UPS ( char   *MGRS,
   return (error_code);
 } /* Convert_MGRS_To_UPS */
 
+long USE_DLL Convert_Geodetic_To_MGRS_param (double Latitude,
+                                             double Longitude,
+                                             long   Precision,
+                                             long*  Zone,
+                                             long   Letters[MGRS_LETTERS],
+                                             double* Easting,
+                                             double* Northing,
+                                             long* PrecisionOut)
+{
+    char MGRS[64];
+    long error;
+    if ((error = Convert_Geodetic_To_MGRS(Latitude, Longitude, Precision, MGRS)) == MGRS_NO_ERROR) {
+        error = Break_MGRS_String(MGRS, Zone, Letters, Easting, Northing, PrecisionOut);
+    }
+    return error;
+}
+
 void initlibmgrs() {}
 void PyInit_libmgrs() {}
