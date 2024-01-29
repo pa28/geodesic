@@ -65,7 +65,7 @@ public func project(_ l1: (lat: Double, lon: Double),
                     _ l2: (azi: Double, dis: Double),
                     ellipsoid: (a: Double, f: Double) = wgs84
 ) -> (lat: Double, lon: Double) {
-    assert(l1.lat >= -90.0 / 2 && l1.lat <= 90.0 / 2, "l1.lat '\(l1.lat)' outside [-90, 90]")
+    assert(l1.lat >= -90.0 && l1.lat <= 90.0, "l1.lat '\(l1.lat)' outside [-90, 90]")
     assert(l1.lon >= -180.0 && l1.lon <= 180.0, "l1.lon '\(l1.lon)' outside [-180, 180]")
     assert(l2.azi >= 0.0 && l2.azi <= 360, "l2.azi '\(l2.azi))' outside [0, 360]")
 
