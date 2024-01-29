@@ -25,7 +25,7 @@ Here is an example to project a new point from an existing point on the
 [WGS 84 ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System).
 
     import geodesic
-    let dest = project(CLLocationCoordinate2D(latitude: 40.7128, longitude: -740060), az: 180.0, meters: 5000.0)
+    let dest = project(CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060), az: 180.0, meters: 5000.0)
 
 and that's it so far. I will be adding conversion to and from UTM and MGRS coordinates using
 [hobuinc/mgrs](https://github.com/hobuinc/mgrs.git)
