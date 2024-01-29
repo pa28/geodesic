@@ -50,6 +50,75 @@ public func distance(_ x: (lat: Double, lon: Double),
 }
 
 ///
+/// Compute the distance between two points and the initial true course on an ellipsoid.
+/// The ellipsoid parameters default to the WGS-84 parameters.
+///
+/// - Parameters:
+///   - l1: start point CLLocationCoordinate2D.
+///   - l2: destinatiion point CLLocationCoordinate2D.
+///   - a: first ellipsoid parameter in meters (defaults to WGS-84 parameter)
+///   - f: second ellipsoid parameter in meters (defaults to WGS-84 parameter)
+///
+/// - Returns: a tuple with the distance in meters, the initial great circle course from l1 to l2 in degrees true,
+/// the forward azimuth at point 2 in degrees, and the arc distance from pint l1 to l2 in degrees.
+///
+public func greatCircle(_ l1: CLLocationCoordinate2D,
+                     _ l2: CLLocationCoordinate2D,
+                     ellipsoid: (a: Double, f: Double) = wgs84
+) -> (s12: Double, az1: Double, az2: Double, as12: Double) {
+
+    // validate lat and lon values
+    assert(l1.latitude >= -90.0 && l1.latitude <= 90.0 / 2, "l1.lat '\(l1.latitude)' outside [-90, 90]")
+    assert(l1.longitude >= -180.0 && l1.longitude <= 180.0, "l1.lon '\(l1.longitude)' outside [-180, 180]")
+    assert(l2.latitude >= -90.0 && l2.latitude <= 90.0, "l1.lat '\(l2.latitude)' outside [-90, 90]")
+    assert(l2.longitude >= -180.0 && l2.longitude <= 180.0, "l1.lon '\(l2.longitude)' outside [-180, 180]")
+
+    // shortcut for zero distance
+    if l1.latitude == l2.latitude && l1.longitude == l2.longitude {
+        return (0.0, 0.0, 0.0, 0.0)
+    }
+
+    var s12 = Double.nan
+    var az1 = Double.nan
+    var az2 = Double.nan
+
+    var g: geod_geodesic = geod_geodesic()
+    geod_init(&g, ellipsoid.a, ellipsoid.f)
+    let as12 = geod_geninverse(&g, l1.latitude, l1.longitude, l2.latitude, l2.longitude, &s12, &az1, &az2, nil, nil, nil, nil)
+    return (s12, az1, az2, as12)
+}
+
+public func toRadians(_ degrees: Double) -> Double {
+    return Double.pi * (degrees / 180.0)
+}
+
+///
+/// Compute the cross track error at location 3 when the disirec course is from location 1 to location 2.
+///
+/// - Parameters:
+///   - as13: the angular distance from location 1 to location 3 (degrees)
+///   - b13: the initial bearing from location 1 to location 3 (degrees)
+///   - b12: the initial bearing from location 1 to location 2 (degrees)
+///   - lat: the latitude at location 3 (degrees), used to compute the radius of the earth.
+///
+/// - Returns: a tuple with the cross track angular distance in radians, and the angular distance down range along the desired track in radians.
+///
+/// https://stackoverflow.com/questions/3997410/how-to-calculate-cross-track-error-gps-core-location
+/// https://gis.stackexchange.com/questions/20200/how-do-you-compute-the-earths-radius-at-a-given-geodetic-latitude
+///
+
+public func crossTrackError(as13: Double, b13: Double, b12: Double, lat: Double) -> (xt: Double, at: Double) {
+    let ellipsoid: (a: Double, f: Double) = wgs84
+    let a = ellipsoid.a
+    let b = ellipsoid.f
+    let f = toRadians(lat)
+    let R = ( pow((a*a) * cos(f), 2) + pow(b*b * sin(f), 2)) / (pow(a * cos(f), 2) + pow(b * sin(f),2))
+    let asxt = asin(sin(toRadians(as13)) * sin(toRadians(b13 - b12))) * sqrt(R)
+    let asat = acos(cos(as13)/cos(asxt/R)) * R
+    return (asxt, asat)
+}
+
+///
 /// Compute a new point point on an ellipsoid give a a starting point, a true azimuth and distance in meteres.
 /// The ellipsoid parameters default to the WGS-84 parameters.
 ///
