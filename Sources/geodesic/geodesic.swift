@@ -49,6 +49,18 @@ public func distance(_ x: (lat: Double, lon: Double),
     return s12
 }
 
+///
+/// Compute a new point point on an ellipsoid give a a starting point, a true azimuth and distance in meteres.
+/// The ellipsoid parameters default to the WGS-84 parameters.
+///
+/// - Parameters:
+///   - l1: first point as a tuple with latitude (lat) and longitude (lon) in degrees.
+///   - l2: second tuple with azimuth in degrees clockwise from True North, and distance in meters.
+///   - a: first ellipsoid parameter in meters (defaults to WGS-84 parameter)
+///   - f: second ellipsoid parameter in meters (defaults to WGS-84 parameter)
+///
+/// - Returns: the second point as a tuple with latitude (lat) and longitude (lon).
+///
 public func project(_ l1: (lat: Double, lon: Double),
                     _ l2: (azi: Double, dis: Double),
                     ellipsoid: (a: Double, f: Double) = wgs84
@@ -74,8 +86,35 @@ public func project(_ l1: (lat: Double, lon: Double),
     return (lat2, lon2)
 }
 
+///
+/// Compute a new point point on an ellipsoid give a a starting point, a true azimuth and distance in meteres.
+/// The ellipsoid parameters default to the WGS-84 parameters.
+///
+/// - Parameters:
+///   - loc: first point as a CLLocation.
+///   - az: azimuth in degrees clockwise from True North
+///   - meteres: distance in meters.
+///
+/// - Returns: the second point as a CLLocation.
+///
 public func project(loc: CLLocation, az: Double, meters: Double) -> CLLocation {
     let dest = project((lat: loc.coordinate.latitude, lon: loc.coordinate.longitude),
                    (azi: az, dis: meters))
     return CLLocation(latitude: dest.lat, longitude: dest.lon)
+}
+
+///
+/// Compute a new point point on an ellipsoid give a a starting point, a true azimuth and distance in meteres.
+/// The ellipsoid parameters default to the WGS-84 parameters.
+///
+/// - Parameters:
+///   - loc: first point as a CLLocationCoordinate2D.
+///   - az: azimuth in degrees clockwise from True North
+///   - meteres: distance in meters.
+///
+/// - Returns: the second point as a CLLocationCoordinate2D.
+///
+public func project(loc: CLLocationCoordinate2D, az: Double, meters: Double) -> CLLocationCoordinate2D {
+    let dest = project((lat: loc.latitude, lon: loc.longitude), (azi: az, dis: meters))
+    return CLLocationCoordinate2D(latitude: dest.lat, longitude: dest.lon)
 }
