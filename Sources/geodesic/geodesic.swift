@@ -110,9 +110,9 @@ public func toRadians(_ degrees: Double) -> Double {
 public func crossTrackError(as13: Double, b13: Double, b12: Double, lat: Double) -> (xt: Double, at: Double) {
     let ellipsoid: (a: Double, f: Double) = wgs84
     let a = ellipsoid.a
-    let b = ellipsoid.f
+    let b = a * (1.0 - ellipsoid.f)
     let f = toRadians(lat)
-    let R = 6371000.0 //( pow((a*a) * cos(f), 2) + pow(b*b * sin(f), 2)) / (pow(a * cos(f), 2) + pow(b * sin(f),2))
+    let R = sqrt(( pow((a*a) * cos(f), 2) + pow(b*b * sin(f), 2)) / (pow(a * cos(f), 2) + pow(b * sin(f),2)))
     let asxt = asin(sin(toRadians(as13)) * sin(toRadians(b13 - b12))) * sqrt(R)
     let asat = acos(cos(as13)/cos(asxt/R)) * R
     return (asxt, asat)
