@@ -112,7 +112,7 @@ public func crossTrackError(as13: Double, b13: Double, b12: Double, lat: Double)
     let a = ellipsoid.a
     let b = ellipsoid.f
     let f = toRadians(lat)
-    let R = ( pow((a*a) * cos(f), 2) + pow(b*b * sin(f), 2)) / (pow(a * cos(f), 2) + pow(b * sin(f),2))
+    let R = 6371000.0 //( pow((a*a) * cos(f), 2) + pow(b*b * sin(f), 2)) / (pow(a * cos(f), 2) + pow(b * sin(f),2))
     let asxt = asin(sin(toRadians(as13)) * sin(toRadians(b13 - b12))) * sqrt(R)
     let asat = acos(cos(as13)/cos(asxt/R)) * R
     return (asxt, asat)
